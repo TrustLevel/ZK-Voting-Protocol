@@ -1,4 +1,4 @@
-# Cryptographic Specifications for Privacy-Preserving Voting System
+# Cryptographic Specifications
 
 ## 1. Core Cryptographic Components
 
@@ -267,20 +267,3 @@ fn handle_security_error(
     }
 }
 ```
-
-## 4. Performance Considerations
-
-1. Proof Generation:
-   - Optimized circuit compilation
-   - Efficient witness generation
-   - Minimal proof size
-
-2. Verification Efficiency:
-   - Fast proof verification
-   - Batch verification support
-   - Scalable state management
-
-3. Privacy-Performance Tradeoffs:
-   - Balanced privacy measures
-   - Optimized cryptographic operations
-   - Efficient state transitions
