@@ -1,0 +1,34 @@
+sequenceDiagram
+    participant U as User/Wallet
+    participant F as Frontend
+    participant A as API Gateway
+    participant R as Redis Cache
+    participant M as Midnight Node
+    participant C as Cardano Node
+    participant DB as PostgreSQL
+    
+    Note over U,DB: Registration Flow
+    U->>F: Connect Wallet
+    F->>A: Verify Eligibility
+    A->>DB: Check Registration Status
+    A->>R: Cache User Session
+    F->>M: Generate ZK Proof
+    M->>C: Store Registration
+    C->>A: Confirm Registration
+    A->>U: Return Voting Token
+    
+    Note over U,DB: Voting Flow
+    U->>F: Submit Vote
+    F->>M: Generate Vote ZK Proof
+    M->>M: Validate Proof
+    M->>C: Submit Encrypted Vote
+    C->>A: Confirm Vote
+    A->>DB: Record Anonymous Vote
+    A->>U: Return Vote Receipt
+    
+    Note over U,DB: Verification Flow
+    U->>F: Request Verification
+    F->>A: Submit Vote Receipt
+    A->>C: Verify On-Chain
+    A->>M: Verify Privacy Proof
+    A->>U: Return Verification
