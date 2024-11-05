@@ -1,4 +1,4 @@
-# Protocol Architecture and Interaction Specification
+# Protocol Layouts and Interaction Specification
 
 ## 1. Voter Registration and Anonymity
 
