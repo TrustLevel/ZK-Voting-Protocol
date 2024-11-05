@@ -1,4 +1,4 @@
-# Off-chain Calculations in ZK Voting System
+# Off-chain Calculations
 
 ## 1. ZK Proof Generation
 
@@ -150,31 +150,9 @@ interface CacheManager {
 }
 ```
 
-## 5. Why Off-chain?
+## 5. Security Considerations
 
-1. **Computational Efficiency**:
-   - ZK proof generation is computationally intensive
-   - Not suitable for on-chain execution
-   - Reduces blockchain resource usage
-
-2. **Cost Optimization**:
-   - Reduces transaction costs
-   - Minimizes chain storage requirements
-   - Optimizes gas usage
-
-3. **User Experience**:
-   - Better responsiveness
-   - Immediate feedback
-   - Reduced wait times
-
-4. **Scalability**:
-   - Parallel processing capability
-   - Horizontal scaling of services
-   - Better handling of peak loads
-
-## 6. Security Considerations
-
-### 6.1 Client-Side Security
+### 5.1 Client-Side Security
 ```typescript
 interface SecurityMeasures {
   // Secure key generation
@@ -192,7 +170,7 @@ interface SecurityMeasures {
 }
 ```
 
-### 6.2 Service Security
+### 5.2 Service Security
 ```typescript
 interface ServiceSecurity {
   // Rate limiting
@@ -208,9 +186,9 @@ interface ServiceSecurity {
 }
 ```
 
-## 7. Implementation Guidelines
+## 6. Implementation Details
 
-### 7.1 Proof Generation
+### 6.1 Proof Generation
 ```typescript
 // Example proof generation implementation
 async function generateVoteProof(
@@ -234,7 +212,7 @@ async function generateVoteProof(
 }
 ```
 
-### 7.2 Request Flow
+### 6.2 Request Flow
 ```typescript
 // Example request handling flow
 async function handleVoteRequest(
@@ -256,30 +234,3 @@ async function handleVoteRequest(
 }
 ```
 
-## 8. Error Handling
-
-```typescript
-interface ErrorHandler {
-  // Handle proof generation errors
-  handleProofError(
-    error: ProofGenerationError
-  ): Promise<ErrorResponse>;
-
-  // Handle verification errors
-  handleVerificationError(
-    error: VerificationError
-  ): Promise<ErrorResponse>;
-
-  // Handle transaction errors
-  handleTransactionError(
-    error: TransactionError
-  ): Promise<ErrorResponse>;
-}
-```
-
-Would you like me to:
-1. Elaborate on any specific off-chain component?
-2. Provide more implementation details?
-3. Add more security considerations?
-4. Discuss scaling strategies?
-5. Create example implementations?
