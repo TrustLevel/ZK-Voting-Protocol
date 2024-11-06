@@ -1,34 +1,36 @@
 sequenceDiagram
     participant U as User/Wallet
-    participant F as Frontend
-    participant A as API Gateway
-    participant R as Redis Cache
-    participant M as Midnight Node
-    participant C as Cardano Node
-    participant DB as PostgreSQL
+    participant D as DApp Frontend
+    participant P as PlonK Circuit
+    participant C as Cardano Chain
+    participant S as Snarkjs
     
-    Note over U,DB: Registration Flow
-    U->>F: Connect Wallet
-    F->>A: Verify Eligibility
-    A->>DB: Check Registration Status
-    A->>R: Cache User Session
-    F->>M: Generate ZK Proof
-    M->>C: Store Registration
-    C->>A: Confirm Registration
-    A->>U: Return Voting Token
+    note over U,S: Initial Setup
+    S->>P: Universal Trusted Setup
+    P->>D: Store Verification Keys
     
-    Note over U,DB: Voting Flow
-    U->>F: Submit Vote
-    F->>M: Generate Vote ZK Proof
-    M->>M: Validate Proof
-    M->>C: Submit Encrypted Vote
-    C->>A: Confirm Vote
-    A->>DB: Record Anonymous Vote
-    A->>U: Return Vote Receipt
+    note over U,S: Wallet Connection
+    U->>D: Access DApp
+    D->>D: Verify HTTPS/Security
+    D->>U: Request Wallet Connection
+    U->>D: Approve Connection & Sign Message
     
-    Note over U,DB: Verification Flow
-    U->>F: Request Verification
-    F->>A: Submit Vote Receipt
-    A->>C: Verify On-Chain
-    A->>M: Verify Privacy Proof
-    A->>U: Return Verification
+    note over U,S: Ballot Creation
+    U->>D: Create Ballot
+    D->>P: Generate Ballot Circuit
+    P->>C: Store Ballot Parameters
+    
+    note over U,S: Vote Casting
+    U->>D: Submit Vote
+    D->>P: Generate Vote Commitment
+    P->>S: Generate ZK Proof
+    S->>C: Submit Proof & Commitment
+    C->>D: Confirm Transaction
+    D->>U: Show Receipt
+    
+    note over U,S: Vote Tallying
+    D->>C: Fetch Vote Commitments
+    D->>P: Generate Tally Circuit
+    P->>S: Generate Tally Proof
+    S->>C: Submit Final Results & Proof
+    C->>U: Display Verified Results
