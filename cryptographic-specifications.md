@@ -1,4 +1,4 @@
-# Cryptographic Specifications for ZK Voting
+# Cryptographic Specifications
 
 ## 1. Vote Commitment Scheme
 
@@ -134,35 +134,6 @@ fn generate_nullifier(
         nonce.to_field()
     ])
 }
-```
-
-### Implementation Guidelines
-
-#### 1. Tree Management
-```plaintext
-Requirements:
-1. Efficient updates
-2. Quick verification
-3. Privacy preservation
-4. Scalable structure
-```
-
-#### 2. Security Considerations
-```plaintext
-Critical Aspects:
-1. Hash collision resistance
-2. Second preimage resistance
-3. Root authenticity
-4. Privacy maintenance
-```
-
-#### 3. Performance Optimization
-```plaintext
-Focus Areas:
-1. Proof generation efficiency
-2. Verification speed
-3. Storage optimization
-4. Update performance
 ```
 
 ### Technical Notes
