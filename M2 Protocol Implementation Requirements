@@ -1,0 +1,190 @@
+# M2 Protocol Implementation Requirements
+
+## Essential On-Chain Protocols
+
+### 1. Basic Registration Validator
+```gleam
+// Core registration functionality
+validator registration {
+  fn validate_registration(
+    state: VotingState,
+    registration: Registration,
+    ctx: ScriptContext,
+  ) -> Bool {
+    // Verify registration commitment
+    // Check nullifier uniqueness
+    // Update Merkle root
+  }
+}
+```
+
+### 2. Simple Vote Validator
+```gleam
+// Essential voting functionality
+validator voting {
+  fn validate_vote(
+    state: VotingState,
+    vote: Vote,
+    ctx: ScriptContext,
+  ) -> Bool {
+    // Verify vote proof
+    // Check registration status
+    // Update vote commitments
+  }
+}
+```
+
+### 3. Basic Tally Validator
+```gleam
+// Minimal tallying functionality
+validator tallying {
+  fn validate_tally(
+    state: VotingState,
+    tally: Tally,
+    ctx: ScriptContext,
+  ) -> Bool {
+    // Verify tally proof
+    // Aggregate commitments
+    // Publish results
+  }
+}
+```
+
+## Required Off-Chain Protocols
+
+### 1. User Interface Components
+```typescript
+// Essential UI elements
+interface CoreUI {
+  // Wallet connection (CIP-30)
+  connectWallet(): Promise<void>;
+  
+  // Basic registration
+  registerVoter(): Promise<void>;
+  
+  // Simple voting interface
+  castVote(option: number): Promise<void>;
+  
+  // Transaction status
+  checkStatus(txId: string): Promise<Status>;
+}
+```
+
+### 2. ZK Proof Generation
+```typescript
+interface ProofGeneration {
+  // Registration proof
+  generateRegistrationProof(
+    identity: Identity,
+    merkleRoot: ByteArray
+  ): Promise<Proof>;
+  
+  // Vote proof
+  generateVoteProof(
+    vote: Vote,
+    merkleRoot: ByteArray
+  ): Promise<Proof>;
+  
+  // Basic tally proof
+  generateTallyProof(
+    commitments: ByteArray[]
+  ): Promise<Proof>;
+}
+```
+
+### 3. State Management
+```typescript
+interface StateManager {
+  // Local Merkle tree
+  updateMerkleTree(commitment: ByteArray): Promise<void>;
+  
+  // Nullifier tracking
+  checkNullifier(nullifier: ByteArray): Promise<boolean>;
+  
+  // Vote commitment storage
+  storeVoteCommitment(commitment: ByteArray): Promise<void>;
+}
+```
+
+## Protocol Interactions
+
+### 1. Registration Flow
+```plaintext
+Required Steps:
+1. Wallet connection
+2. Identity commitment generation
+3. Registration proof creation
+4. Transaction submission
+5. State update confirmation
+```
+
+### 2. Voting Flow
+```plaintext
+Required Steps:
+1. Registration verification
+2. Vote commitment creation
+3. Proof generation
+4. Transaction submission
+5. Status tracking
+```
+
+### 3. Tallying Flow
+```plaintext
+Required Steps:
+1. Commitment collection
+2. Result computation
+3. Proof generation
+4. Result publication
+```
+
+## Minimum Security Requirements
+
+### 1. Privacy Protection
+```plaintext
+Essential Features:
+- Basic vote privacy
+- Registration anonymity
+- Proof security
+- Data encryption
+```
+
+### 2. State Integrity
+```plaintext
+Required Checks:
+- Nullifier uniqueness
+- Proof validity
+- State consistency
+- Transaction validity
+```
+
+## Implementation Priority
+
+### Phase 1: Core Infrastructure
+1. Basic validator structure
+2. Simple proof generation
+3. Essential state management
+4. Transaction building
+
+### Phase 2: User Interface
+1. Wallet integration
+2. Basic registration flow
+3. Simple voting interface
+4. Status display
+
+### Phase 3: State Management
+1. Local tree management
+2. Nullifier tracking
+3. Commitment storage
+4. State synchronization
+
+## Deferred Features
+
+### Not Required for First Iteration
+1. Advanced batching
+2. Complex recovery mechanisms
+3. Extensive error handling
+4. Performance optimizations
+6. Complex state recovery
+
+
+
