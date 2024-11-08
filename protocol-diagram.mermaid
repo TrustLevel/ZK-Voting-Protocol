@@ -1,0 +1,66 @@
+graph TB
+    subgraph "Off-Chain Components"
+        UI[User Interface]
+        ZKP[ZK Proof Generation]
+        STATE[State Management]
+        SYNC[Data Synchronization]
+        TX[Transaction Builder]
+        
+        subgraph "User Interaction"
+            WALLET[Wallet Connection]
+            UI --> WALLET
+        end
+        
+        subgraph "ZK Operations"
+            ZKP -->|Generate| REG_PROOF[Registration Proof]
+            ZKP -->|Generate| VOTE_PROOF[Vote Proof]
+            ZKP -->|Generate| TALLY_PROOF[Tally Proof]
+        end
+        
+        subgraph "Local State"
+            STATE -->|Manage| MERKLE[Merkle Tree]
+            STATE -->|Track| NULL_SET[Nullifier Set]
+            STATE -->|Cache| PARAMS[Parameters]
+        end
+    end
+    
+    subgraph "On-Chain Components"
+        subgraph "Smart Contracts"
+            REG_VAL[Registration Validator]
+            VOTE_VAL[Vote Validator]
+            TALLY_VAL[Tally Validator]
+        end
+        
+        subgraph "Chain State"
+            MERKLE_ROOT[Merkle Root]
+            NULLIFIERS[Nullifier Set]
+            COMMITS[Vote Commitments]
+        end
+    end
+    
+    %% Interactions
+    UI -->|Request| ZKP
+    ZKP -->|Submit| TX
+    TX -->|Build| REG_VAL
+    TX -->|Build| VOTE_VAL
+    TX -->|Build| TALLY_VAL
+    
+    SYNC -->|Monitor| MERKLE_ROOT
+    SYNC -->|Monitor| NULLIFIERS
+    SYNC -->|Monitor| COMMITS
+    
+    STATE -.->|Sync| SYNC
+    
+    %% Validator Interactions
+    REG_VAL -->|Update| MERKLE_ROOT
+    REG_VAL -->|Update| NULLIFIERS
+    VOTE_VAL -->|Add| COMMITS
+    VOTE_VAL -->|Update| NULLIFIERS
+    TALLY_VAL -->|Aggregate| COMMITS
+    
+    classDef offchain fill:#e1f5fe,stroke:#01579b
+    classDef onchain fill:#fff3e0,stroke:#e65100
+    classDef interaction fill:#f3e5f5,stroke:#4a148c
+    
+    class UI,ZKP,STATE,SYNC,TX,WALLET,REG_PROOF,VOTE_PROOF,TALLY_PROOF,MERKLE,NULL_SET,PARAMS offchain
+    class REG_VAL,VOTE_VAL,TALLY_VAL,MERKLE_ROOT,NULLIFIERS,COMMITS onchain
