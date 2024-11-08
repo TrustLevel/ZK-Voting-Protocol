@@ -181,26 +181,89 @@ impl VotingCircuit {
 
 ## 5. Cardano Integration
 
-### Plutus Interface
-```rust
-pub struct PlutusProofVerifier {
-    /// Verification key
-    verification_key: VerificationKey,
-    /// Proof parameters
-    proof_params: ProofParameters,
+### Aiken Interface
+// Core types for proof verification
+type ProofVerifier {
+  verification_key: ByteArray,
+  proof_params: ProofParameters,
 }
 
-impl PlutusProofVerifier {
-    /// Generate Plutus validator
-    pub fn generate_validator(&self) -> Result<String, GenerationError> {
-        let template = include_str!("templates/proof_validator.plutus");
-        
-        // Insert verification key and parameters
-        let validator = template
-            .replace("{{VERIFICATION_KEY}}", &self.verification_key.to_hex())
-            .replace("{{PROOF_PARAMS}}", &self.proof_params.to_hex());
-            
-        Ok(validator)
-    }
+type ProofParameters {
+  public_inputs: List<ByteArray>,
+  verification_data: ByteArray,
 }
-```
+
+// Main validator for proof verification
+validator proof_verifier {
+  fn verify(
+    verifier: ProofVerifier,
+    redeemer: ProofRedeemer,
+    context: ScriptContext,
+  ) -> Bool {
+    // Extract proof data
+    let ProofRedeemer { proof, inputs } = redeemer
+
+    // Verify the proof
+    verify_plonk_proof(
+      verifier.verification_key,
+      proof,
+      inputs,
+      verifier.proof_params.verification_data,
+    )
+  }
+}
+
+// Helper functions for proof verification
+fn verify_plonk_proof(
+  vk: ByteArray,
+  proof: ByteArray,
+  inputs: List<ByteArray>,
+  params: ByteArray,
+) -> Bool {
+  // Implementation of PLONK verification
+  verify_proof(vk, proof, inputs, params)
+}
+
+// Validator for ceremony contribution
+validator ceremony_validator {
+  fn contribute(
+    datum: CeremonyState,
+    redeemer: Contribution,
+    ctx: ScriptContext,
+  ) -> Bool {
+    // Verify contribution validity
+    when datum.phase is {
+      Active -> {
+        verify_contribution(redeemer, datum.verification_key) &&
+        verify_timing(ctx) &&
+        verify_sequence(datum.contributions, redeemer)
+      }
+      _ -> False
+    }
+  }
+}
+
+// Types for validator state
+type CeremonyState {
+  phase: Phase,
+  verification_key: ByteArray,
+  contributions: List<Contribution>,
+  min_participants: Int,
+}
+
+type Phase {
+  Active
+  Complete
+  Failed
+}
+
+// Integration with Rust setup
+fn create_validator_params(setup: UniversalParams) -> ProofVerifier {
+  ProofVerifier {
+    verification_key: setup.verification_key.to_bytes(),
+    proof_params: ProofParameters {
+      public_inputs: [],
+      verification_data: setup.powers_of_tau.to_bytes(),
+    },
+  }
+}
