@@ -1,0 +1,57 @@
+sequenceDiagram
+    actor User
+    participant DApp
+    participant Wallet
+    participant ZK System
+    participant Chain
+
+    %% Step 1: Access & Connection
+    Note over User,Chain: Step 1: DApp Access & Wallet Connection
+    User->>DApp: Visit DApp URL
+    User->>DApp: Click Connect Wallet
+    DApp->>Wallet: Request Connection (CIP-30)
+    Wallet->>User: Request Approval
+    User->>Wallet: Approve Connection
+    Wallet->>DApp: Return Wallet Info
+    DApp->>Wallet: Request Message Signing
+    Wallet->>User: Show Sign Request
+    User->>Wallet: Approve Signing
+    Wallet->>DApp: Return Signed Message
+    
+    %% Step 2: Ballot Creation
+    Note over User,Chain: Step 2: Ballot Creation
+    User->>DApp: Define Ballot Parameters
+    DApp->>ZK System: Generate Ballot Setup
+    DApp->>Chain: Submit Ballot Metadata
+    Chain->>DApp: Return Ballot ID
+    DApp->>Chain: Setup Access Control
+    
+    %% Step 3: Voting
+    Note over User,Chain: Step 3: Voting Process
+    User->>DApp: Access Ballot
+    DApp->>Chain: Verify Eligibility
+    User->>DApp: Select Vote Option
+    DApp->>ZK System: Generate Vote Components
+    
+    par Vote Components
+        ZK System->>ZK System: Generate Pedersen Commitment
+        ZK System->>ZK System: Create Nullifier
+        ZK System->>ZK System: Generate ZK-SNARK Proof
+    end
+    
+    ZK System->>DApp: Return Vote Package
+    DApp->>Wallet: Request Transaction
+    Wallet->>User: Confirm Transaction
+    User->>Wallet: Approve Transaction
+    Wallet->>Chain: Submit Vote Transaction
+    Chain->>DApp: Confirm Vote
+    DApp->>User: Show Confirmation
+    
+    %% Step 4: Tallying
+    Note over User,Chain: Step 4: Tallying and Results
+    DApp->>Chain: Retrieve Vote Commitments
+    DApp->>ZK System: Aggregate Votes
+    ZK System->>ZK System: Generate Tally Proof
+    DApp->>Chain: Submit Final Tally
+    Chain->>DApp: Confirm Results
+    DApp->>User: Display Results
